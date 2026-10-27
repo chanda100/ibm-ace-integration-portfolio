@@ -1,0 +1,60 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "RESTWrapper",
+    "version": "1.0.0",
+    "description": "RESTWrapper"
+  },
+  "servers": [
+    {
+      "url": "/restwrapper/v1"
+    }
+  ],
+  "components": {
+    "schemas": {},
+    "requestBodies": {}
+  },
+  "paths": {
+    "/student": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "studentId": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "dob": {
+                    "type": "string"
+                  },
+                  "studentEmail": {
+                    "type": "string"
+                  },
+                  "guardianContactName": {
+                    "type": "string"
+                  },
+                  "guardianContactNo": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

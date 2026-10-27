@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <MQInputMessage timestamp="1788768319552" nodeId="FCMComposite_1_1" name="new message 1" id="1788768319552-7">
+        <plainText>%3C%3Fxml+version%3D%221.0%22+encoding%3D%22UTF-8%22%3F%3E%3Cstudent+xmlns%3Axsi%3D%22http%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema-instance%22+xsi%3AnoNamespaceSchemaLocation%3D%22StudentInfo.xsd%22%3E++%3CstudentId%3E123%3C%2FstudentId%3E++%3CfirtName%3Etest+first+name%3C%2FfirtName%3E++%3ClastName%3Etest+last+name%3C%2FlastName%3E%3CdateOfBirth%3E22%2F2%2F2026%3C%2FdateOfBirth%3E%3CstudentEmail%3Eabc%40gmail.com%3C%2FstudentEmail%3E%3CguardianContactName%3Etest+Parent%3C%2FguardianContactName%3E%3CguardianContactNo%3E1212phoneno%3C%2FguardianContactNo%3E%3C%2Fstudent%3E</plainText>
+        <MessageHeader backoutCount="0" characterSet="0" encoding="0" expiry="-1" feedback="0" messageFlags="0" messageType="8" messageSequenceNumber="1" offset="0" originalLength="-1" persistence="2" priority="-1" putApplicationType="0" report="0"/>
+    </MQInputMessage>
+</MessagePool>

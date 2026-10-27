@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="student">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="studentId" type="xsd:string" />
+                <xsd:element name="firtName" type="xsd:string" />
+                <xsd:element name="lastName" type="xsd:string" />
+                <xsd:element name="dateOfBirth" type="xsd:string" />
+                <xsd:element name="studentEmail" type="xsd:string" />
+                <xsd:element name="guardianContactName" type="xsd:string" />
+                <xsd:element name="guardianContactNo" type="xsd:string" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

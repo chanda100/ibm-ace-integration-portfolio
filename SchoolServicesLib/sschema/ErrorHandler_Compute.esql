@@ -1,0 +1,76 @@
+
+BROKER SCHEMA sschema
+
+CREATE COMPUTE MODULE ErrorHandler_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		DECLARE errorCode INTEGER;
+        DECLARE errorDesc CHARACTER '';
+        DECLARE nodeLabel CHARACTER '';
+        
+        --Pointing ref to first child
+        DECLARE ref REFERENCE TO InputExceptionList.*[1];
+        --Loop deeply through the tree to find the root cause (last child node)
+        WHILE LASTMOVE(ref) DO
+            
+            IF ref.Number IS NOT NULL THEN
+                SET errorCode    = ref.Number;      -- Error Code
+                SET nodeLabel   = ref.Label;     -- Node name
+                SET errorDesc      = ref.Text;        -- Basic error description
+                
+                -- Append any specific dynamic insert texts if available. 
+                FOR refInsert AS ref.Insert[] DO
+                    IF refInsert.Text IS NOT NULL THEN
+                        SET errorDesc = errorDesc || ' | ' || refInsert.Text;
+                    END IF;
+                END FOR;
+            END IF;
+            
+            -- Move deeper(last child node) into the nested exception tree
+            MOVE ref LASTCHILD;
+        END WHILE;
+       	-- Preparing MQ message to be written on MQ with detail error message
+       	-- Explicitly copy or build the MQMD header (Critical for MQ tracking)
+		SET OutputRoot.MQMD.Report          = MQRO_NONE;
+		SET OutputRoot.MQMD.MsgType         = MQMT_DATAGRAM;
+		SET OutputRoot.MQMD.Expiry          = 1728000; -- Optional: 2 days expiry so log queues don't fill up forever
+		SET OutputRoot.MQMD.Format          = MQFMT_STRING; -- Tells MQ the payload is readable text/JSON/XML
+		-- Construct the detailed technical log payload for MQ
+		
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+		CREATE FIELD OutputRoot.XMLNSC.Data;
+		DECLARE refOut REFERENCE TO OutputRoot.XMLNSC.Data;
+		
+		SET refOut.LogTimestamp  = CURRENT_TIMESTAMP;
+		SET refOut.Application   = ApplicationLabel;
+		SET refOut.MessageFlow   = MessageFlowLabel;
+		SET refOut.ExecutionGroup= ExecutionGroupLabel; -- Broker / Integration Server name
+		SET refOut.NodeName      = nodeLabel;
+		SET refOut.ErrorCode     = errorCode;
+		SET refOut.ErrorText     = errorDesc;
+		
+		       
+        -- Populate Environment variables for downstream nodes that will prepare response for the calling flow
+        SET Environment.Variables.Error.Code = errorCode;
+        SET Environment.Variables.Error.Label = nodeLabel;
+        SET Environment.Variables.Error.TimeStamp = refOut.LogTimestamp;
+        
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
